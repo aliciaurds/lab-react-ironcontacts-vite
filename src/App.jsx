@@ -3,9 +3,11 @@ import "./App.css";
 import allContacts from "./contacts.json";
 console.log(allContacts);
 function App() {
-  //Iteration 1, mostrar solo los primeros 5 contactos 
+  //Iteration 1, mostrar solo los primeros 5 contactos
   //*anteriormente: const contacts = allContacts.slice(0, 5);
-  const [contactsToShow, setContactsToShow] = useState(allContacts.splice(0, 5));
+  const [contactsToShow, setContactsToShow] = useState(
+    allContacts.splice(0, 5)
+  );
   //IT 3, funcion que maneje mi "event lister"
   const handleRandomContact = () => {
     //buscar un random index
@@ -26,36 +28,43 @@ function App() {
     const clone = JSON.parse(JSON.stringify(contactsToShow));
     clone.sort((a, b) => a.name.localeCompare(b.name));
     setContactsToShow(clone);
-  }
-   //1. se realiza una copia
+  };
+  //1. se realiza una copia
   //2. utilizamos sort para ordenarlo por nombrem comparando un elemento "a" y otro "b", el localcompare los ordena alfabeticamente
   //3. actualizamos estado
   const handleSortbyPopularity = () => {
     const clone = JSON.parse(JSON.stringify(contactsToShow));
     clone.sort((a, b) => b.popularity - a.popularity); //ordenar por popularity de mayor a menor. Si la resta es positiva "b" irá antes que "a"
     setContactsToShow(clone);
-  }
- 
+  };
+  const handleRemoveContact = (indexToDelete) => {
+    const clone = JSON.parse(JSON.stringify(contactsToShow));
+    clone.splice(indexToDelete, 1);
+    setContactsToShow(clone);
+  };
+
   return (
     <div className="App">
       <h1>IronContacts</h1>
-      {/* //Boton con mi metodo "handleRandomContact" */}
-      <button onClick={handleRandomContact}>Add Random Contact</button> 
-      <button onClick={handleSortbyName}>Sort by name</button>
-      <button onClick={handleSortbyPopularity}>Sort by popularity</button>
+      <div className="btn-container">
+        <button onClick={handleRandomContact}>Add Random Contact</button>
+        <button onClick={handleSortbyName}>Sort by name</button>
+        <button onClick={handleSortbyPopularity}>Sort by popularity</button>
+      </div>
       <table>
-        <thead>
-          <tr>
+        <thead className="thead">
+          <tr className="heading">
             <th>Picture</th>
             <th>Name</th>
             <th>Popularity</th>
             <th>Won an Oscar</th>
             <th>Won an Emmy</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-        {/* map para iterar sobre el array y ejecutar por cada elemento, en este caso quiero visualizar mi randomContact */}
-           {contactsToShow.map((eachContact) => (
+          {/* map para iterar sobre el array y ejecutar por cada elemento, en este caso quiero visualizar mi randomContact */}
+          {contactsToShow.map((eachContact, index) => (
             <tr key={eachContact.id}>
               <td>
                 <img
@@ -66,8 +75,13 @@ function App() {
               </td>
               <td>{eachContact.name}</td>
               <td>{eachContact.popularity.toFixed(2)}</td>
-              <td>{eachContact.wonOscar === true &&  "🏆" }</td>
+              <td>{eachContact.wonOscar === true && "🏆"}</td>
               <td>{eachContact.wonEmmy === true && "🌟"}</td>
+              <td>
+                <button onClick={() => handleRemoveContact(index)}>
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
